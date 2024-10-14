@@ -1,0 +1,15 @@
+{
+  "name": "g2-review-scraper",
+  "version": "1.0.0",
+  "description": "A research tool for scraping reviews from the G2 webiste using residential proxies from \"The Social Proxy\"",
+  "main": "index.js",
+  "repository": "https://github.com/thetamaraelaye/g2-review-scraper.git",
+  "author": "Tamara Elaye <tamaraelaye@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "csv-writer": "^1.6.0",
+    "dotenv": "^16.4.5",
+    "puppeteer": "^23.5.3"
+  }
+}
