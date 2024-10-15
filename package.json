@@ -8,6 +8,8 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
+    "cheerio": "^1.0.0",
+    "csv-write-stream": "^2.0.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.4.5",
     "puppeteer": "^23.5.3"
