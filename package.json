@@ -12,6 +12,10 @@
     "csv-write-stream": "^2.0.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.4.5",
-    "puppeteer": "^23.5.3"
+    "json2csv": "^6.0.0-alpha.2",
+    "puppeteer": "^23.5.3",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-recaptcha": "^3.6.8",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   }
 }
