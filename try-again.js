@@ -17,15 +17,15 @@ puppeteer.use(StealthPlugin());
     ],
   });
 
-   
+
 
   const page = await browser.newPage();
 
-   await page.authenticate({
-     username: process.env.PROXY_USER,
-     password: process.env.PROXY_PASS,
-   }); 
-   ;
+  await page.authenticate({
+    username: process.env.PROXY_USER,
+    password: process.env.PROXY_PASS,
+  });
+  ;
   await page.setViewport({ width: 1280, height: 800 });
 
   // Set a common User-Agent to mimic a real browser
@@ -46,7 +46,7 @@ puppeteer.use(StealthPlugin());
   });
 
   // Wait for the reviews container to appear
-  await page.waitForSelector('div[id="reviews"]', { timeout: 120000 });
+  await page.waitForSelector('div[id="reviews"]', { timeout: 200000 });
 
   console.log("Taking a screenshot for debugging...");
   await page.screenshot({ path: "debug-again.png", fullPage: true });
@@ -67,16 +67,63 @@ puppeteer.use(StealthPlugin());
       "N/A";
     const reviewTitle =
       $(review).find('div[itemprop="name"]').text().trim() || "N/A";
+    const authorProfile = $(review).find('span[itemprop="author"] meta').eq(1).attr('content');
+    const authorPosition = $(review).find('.mt-4th').text().trim();
+    const authorCompanySize = $(review).find('div:contains("Business") span').text().trim();
 
-    
+    const reviewTags = $(review).find('div.tags div div, div.tags div')
+      .map((_, el) => $(el).text().trim())
+      .get();
+    const reviewDate = $(review).find('meta[itemprop="datePublished"]').attr('content');
+    const starsElement = $(review).find('.stars');
+    const starsClass = starsElement.attr('class');
+    const reviewRate = starsClass ? parseFloat(starsClass.split('stars-')[1]) / 2 : null;
+    const reviewLikes = $(review).find('div[itemprop="reviewBody"] div div p').first().text();
+    const reviewDislikes = $(review).find('div[itemprop="reviewBody"] div div p').eq(1).text();
+
 
     reviewsArray.push({
       authorName,
       reviewTitle,
+      authorProfile,
+      authorPosition,
+      authorCompanySize,
+      reviewTags: reviewTags.join(', '),
+      reviewDate,
+      reviewRate,
+      reviewLikes,
+      reviewDislikes
     });
   });
 
   console.log("Extracted Reviews:", reviewsArray);
+
+  // Define CSV writer
+  const csvWriter = createCsvWriter({
+    path: 'reviews.csv',
+    header: [
+      { id: 'authorName', title: 'Author Name' },
+      { id: 'reviewTitle', title: 'Review Title' },
+      { id: 'authorProfile', title: 'Author Profile' },
+      { id: 'authorPosition', title: 'Author Position' },
+      { id: 'authorCompanySize', title: 'Author Company Size' },
+      { id: 'reviewTags', title: 'Review Tags' },
+      { id: 'reviewDate', title: 'Review Date' },
+      { id: 'reviewRate', title: 'Review Rate' },
+      { id: 'reviewLikes', title: 'Review Likes' },
+      { id: 'reviewDislikes', title: 'Review Dislikes' },
+      {id: 'reviewBody', title: 'Review Body'},
+    ]
+  });
+
+  // Write data to CSV
+  csvWriter.writeRecords(reviewsArray)
+    .then(() => {
+      console.log('CSV file written successfully');
+    })
+    .catch(err => {
+      console.error('Error writing CSV file:', err);
+    });
 
   await browser.close();
 })();
